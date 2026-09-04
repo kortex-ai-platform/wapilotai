@@ -133,7 +133,7 @@ function LandingPage() {
           <div className="relative mx-auto max-w-6xl px-4 pt-20 pb-14 text-center">
             <Reveal>
               <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-4 py-1.5 text-xs text-muted-foreground">
-                <Sparkles className="h-3.5 w-3.5 text-accent" /> Automate. Reply. Grow.
+                <Sparkles className="h-3.5 w-3.5 text-success" /> Automate. Reply. Grow.
               </span>
             </Reveal>
             <Reveal delay={80}>
@@ -185,7 +185,7 @@ function LandingPage() {
         {/* Dashboard preview */}
         <section className="mx-auto max-w-6xl px-4 py-16">
           <Reveal className="text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-accent">Command center</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-success">Command center</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
               Your control panel, <span className="gradient-text">beautifully crafted</span>
             </h2>
@@ -201,7 +201,7 @@ function LandingPage() {
         {/* How it works */}
         <section id="how" className="mx-auto max-w-6xl px-4 py-16">
           <Reveal className="text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-accent">Process</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-success">Process</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
               How it <span className="gradient-text">works</span>
             </h2>
@@ -227,7 +227,7 @@ function LandingPage() {
         {/* Use cases */}
         <section id="features" className="mx-auto max-w-6xl px-4 py-16">
           <Reveal className="text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-accent">Capabilities</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-success">Capabilities</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
               Built for <span className="gradient-text">every use case</span>
             </h2>
@@ -236,7 +236,7 @@ function LandingPage() {
             {useCases.map((f, i) => (
               <Reveal key={f.title} delay={(i % 3) * 90}>
                 <div className="card-glow h-full rounded-2xl p-6">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent/12 text-accent">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/12 text-success">
                     <f.icon className="h-5 w-5" />
                   </div>
                   <h3 className="mt-5 text-lg font-semibold">{f.title}</h3>
@@ -250,7 +250,7 @@ function LandingPage() {
         {/* Pricing */}
         <section id="pricing" className="mx-auto max-w-6xl px-4 py-16">
           <Reveal className="text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-accent">Pricing</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-success">Pricing</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
               Simple, transparent <span className="gradient-text">pricing</span>
             </h2>
@@ -280,7 +280,7 @@ function LandingPage() {
                   <ul className="mt-6 space-y-2.5 text-sm">
                     {p.points.map((pt) => (
                       <li key={pt} className="flex items-center gap-2">
-                        <Check className="h-4 w-4 shrink-0 text-accent" /> {pt}
+                        <Check className="h-4 w-4 shrink-0 text-success" /> {pt}
                       </li>
                     ))}
                   </ul>
@@ -298,7 +298,7 @@ function LandingPage() {
         {/* FAQ */}
         <section id="faq" className="mx-auto max-w-3xl px-4 py-16">
           <Reveal className="text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-accent">Support</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-success">Support</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
               Frequently asked <span className="gradient-text">questions</span>
             </h2>

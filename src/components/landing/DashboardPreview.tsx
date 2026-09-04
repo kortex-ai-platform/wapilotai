@@ -10,7 +10,7 @@ export function DashboardPreview() {
         <div className="flex items-center gap-2 border-b border-border bg-background/60 px-4 py-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
-          <span className="h-2.5 w-2.5 rounded-full bg-accent/70" />
+          <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
           <span className="ml-3 text-xs text-muted-foreground">wapilot.ai / admin</span>
         </div>
         <div className="grid grid-cols-[170px_1fr] max-sm:grid-cols-1">
@@ -44,7 +44,7 @@ export function DashboardPreview() {
                 <div key={s.l} className="rounded-xl border border-border bg-card p-3">
                   <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{s.l}</p>
                   <p className="mt-1 text-lg font-bold">{s.v}</p>
-                  <p className="text-[10px] text-accent">{s.d}</p>
+                  <p className="text-[10px] text-success">{s.d}</p>
                 </div>
               ))}
             </div>
@@ -74,7 +74,7 @@ export function DashboardPreview() {
                   <span className="text-muted-foreground max-sm:hidden">{r.p}</span>
                   <span
                     className={`rounded-full px-2 py-0.5 text-[10px] ${
-                      r.s === "Active" ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground"
+                      r.s === "Active" ? "bg-success/15 text-success" : "bg-muted text-muted-foreground"
                     }`}
                   >
                     {r.s}
