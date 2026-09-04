@@ -41,13 +41,13 @@ export { getPublicSettings };
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "WaReply Pro — WhatsApp Automation for Business" },
+      { title: "Wapilot AI — Automate Conversations. Grow Your Business." },
       {
         name: "description",
         content:
-          "WaReply Pro দিয়ে WhatsApp-এ broadcast, auto-reply, WooCommerce order alert ও Telegram notification — সব এক Chrome extension-এ।",
+          "Wapilot AI দিয়ে WhatsApp-এ broadcast, auto-reply, WooCommerce order alert ও Telegram notification — সব এক Chrome extension-এ।",
       },
-      { property: "og:title", content: "WaReply Pro — WhatsApp Automation for Business" },
+      { property: "og:title", content: "Wapilot AI — Automate Conversations. Grow Your Business." },
       {
         property: "og:description",
         content: "Broadcast, auto-reply, WooCommerce orders & Telegram alerts — সব এক জায়গায়।",
@@ -105,7 +105,7 @@ function LandingPage() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <MessageSquare className="h-5 w-5" />
             </div>
-            <span className="text-lg font-bold">WaReply Pro</span>
+            <span className="text-lg font-bold">Wapilot AI</span>
           </div>
           <nav className="flex items-center gap-3">
             <Link to="/download" className="text-sm text-muted-foreground hover:text-foreground">
@@ -196,7 +196,7 @@ function LandingPage() {
       </main>
 
       <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} WaReply Pro — Professional WhatsApp Automation
+        © {new Date().getFullYear()} Wapilot AI — Professional WhatsApp Automation
       </footer>
     </div>
   );

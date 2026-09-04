@@ -8,10 +8,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/download")({
   head: () => ({
     meta: [
-      { title: "Download WaReply Pro Extension" },
-      { name: "description", content: "WaReply Pro Chrome extension ডাউনলোড ও install করার নির্দেশনা।" },
-      { property: "og:title", content: "Download WaReply Pro Extension" },
-      { property: "og:description", content: "WaReply Pro Chrome extension ডাউনলোড ও install করার নির্দেশনা।" },
+      { title: "Download Wapilot AI Extension" },
+      { name: "description", content: "Wapilot AI Chrome extension ডাউনলোড ও install করার নির্দেশনা।" },
+      { property: "og:title", content: "Download Wapilot AI Extension" },
+      { property: "og:description", content: "Wapilot AI Chrome extension ডাউনলোড ও install করার নির্দেশনা।" },
     ],
   }),
   component: DownloadPage,
@@ -30,7 +30,7 @@ function DownloadPage() {
 
   const download = () => {
     setDownloading(true);
-    fetch("/wareply-pro.zip")
+    fetch("/wapilot-ai.zip")
       .then((res) => {
         if (!res.ok) throw new Error(`Download failed: ${res.status}`);
         return res.blob();
@@ -38,7 +38,7 @@ function DownloadPage() {
       .then((blob) => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "wareply-pro.zip";
+        a.download = "wapilot-ai.zip";
         a.click();
         URL.revokeObjectURL(a.href);
       })
@@ -49,7 +49,7 @@ function DownloadPage() {
   return (
     <div className="min-h-screen bg-background">
       <main className="mx-auto max-w-2xl px-4 py-16">
-        <h1 className="text-center text-3xl font-bold">WaReply Pro Extension</h1>
+        <h1 className="text-center text-3xl font-bold">Wapilot AI Extension</h1>
         <p className="mt-2 text-center text-muted-foreground">
           Chrome, Edge, Brave, Arc, Opera — যেকোনো Chromium browser-এ চলবে
         </p>
@@ -79,7 +79,7 @@ function DownloadPage() {
               ))}
             </ol>
             <p className="mt-6 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
-              Install করার পর web.whatsapp.com খুলুন — WaReply Pro প্যানেল নিজে থেকেই চলে আসবে। ৩ দিনের ফ্রি
+              Install করার পর web.whatsapp.com খুলুন — Wapilot AI প্যানেল নিজে থেকেই চলে আসবে। ৩ দিনের ফ্রি
               trial আপনার WhatsApp নম্বর দিয়ে শুরু হবে।
             </p>
           </CardContent>

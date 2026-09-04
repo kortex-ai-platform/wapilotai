@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { Check, X } from "lucide-react";
 
 export const Route = createFileRoute("/admin/payments")({
-  head: () => ({ meta: [{ title: "Payments — WaReply Pro Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Payments — Wapilot AI Admin" }, { name: "robots", content: "noindex" }] }),
   component: PaymentsPage,
 });
 
