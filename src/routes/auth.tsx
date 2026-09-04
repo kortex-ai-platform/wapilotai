@@ -11,10 +11,10 @@ import { MessageSquare } from "lucide-react";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Admin Login — WaReply Pro" },
-      { name: "description", content: "Sign in to the WaReply Pro admin dashboard." },
-      { property: "og:title", content: "Admin Login — WaReply Pro" },
-      { property: "og:description", content: "Sign in to the WaReply Pro admin dashboard." },
+      { title: "Admin Login — Wapilot AI" },
+      { name: "description", content: "Sign in to the Wapilot AI admin dashboard." },
+      { property: "og:title", content: "Admin Login — Wapilot AI" },
+      { property: "og:description", content: "Sign in to the Wapilot AI admin dashboard." },
     ],
   }),
   component: AuthPage,
@@ -59,7 +59,7 @@ function AuthPage() {
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <MessageSquare className="h-6 w-6" />
           </div>
-          <CardTitle className="text-xl">WaReply Pro Admin</CardTitle>
+          <CardTitle className="text-xl">Wapilot AI Admin</CardTitle>
           <CardDescription>
             {mode === "login" ? "আপনার অ্যাকাউন্টে লগইন করুন" : "নতুন admin অ্যাকাউন্ট তৈরি করুন"}
           </CardDescription>

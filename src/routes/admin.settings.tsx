@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/admin/settings")({
-  head: () => ({ meta: [{ title: "Settings — WaReply Pro Admin" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({ meta: [{ title: "Settings — Wapilot AI Admin" }, { name: "robots", content: "noindex" }] }),
   component: SettingsPage,
 });
 

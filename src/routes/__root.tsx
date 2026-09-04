@@ -78,9 +78,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "WaReply Pro — WhatsApp Automation" },
+      { title: "Wapilot AI — WhatsApp Automation" },
       { name: "description", content: "WhatsApp business automation: broadcast, auto-reply, WooCommerce alerts." },
-      { property: "og:title", content: "WaReply Pro" },
+      { property: "og:title", content: "Wapilot AI" },
       { property: "og:description", content: "WhatsApp business automation toolkit." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

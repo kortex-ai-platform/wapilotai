@@ -53,50 +53,153 @@ export type Database = {
         }
         Relationships: []
       }
+      app_users: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          last_active_at: string | null
+          name: string | null
+          notes: string | null
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_active_at?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_active_at?: string | null
+          name?: string | null
+          notes?: string | null
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      license_devices: {
+        Row: {
+          device_id: string
+          first_seen: string
+          id: string
+          label: string | null
+          last_seen: string
+          license_id: number
+          wa_number: string | null
+        }
+        Insert: {
+          device_id: string
+          first_seen?: string
+          id?: string
+          label?: string | null
+          last_seen?: string
+          license_id: number
+          wa_number?: string | null
+        }
+        Update: {
+          device_id?: string
+          first_seen?: string
+          id?: string
+          label?: string | null
+          last_seen?: string
+          license_id?: number
+          wa_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_devices_license_id_fkey"
+            columns: ["license_id"]
+            isOneToOne: false
+            referencedRelation: "licenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       licenses: {
         Row: {
           activated_at: string | null
+          app_user_id: string | null
           business_name: string | null
           created_at: string
+          current_devices: number
+          duration_days: number | null
           expires_at: string | null
           id: number
+          key_hash: string | null
+          key_prefix: string | null
+          last_validation: string | null
           license_key: string | null
+          max_devices: number
           plan: string
+          revoked_at: string | null
           status: string
           trial_days: number
           trial_start: string | null
           user_name: string | null
-          wa_number: string
+          wa_number: string | null
         }
         Insert: {
           activated_at?: string | null
+          app_user_id?: string | null
           business_name?: string | null
           created_at?: string
+          current_devices?: number
+          duration_days?: number | null
           expires_at?: string | null
           id?: never
+          key_hash?: string | null
+          key_prefix?: string | null
+          last_validation?: string | null
           license_key?: string | null
+          max_devices?: number
           plan?: string
+          revoked_at?: string | null
           status?: string
           trial_days?: number
           trial_start?: string | null
           user_name?: string | null
-          wa_number: string
+          wa_number?: string | null
         }
         Update: {
           activated_at?: string | null
+          app_user_id?: string | null
           business_name?: string | null
           created_at?: string
+          current_devices?: number
+          duration_days?: number | null
           expires_at?: string | null
           id?: never
+          key_hash?: string | null
+          key_prefix?: string | null
+          last_validation?: string | null
           license_key?: string | null
+          max_devices?: number
           plan?: string
+          revoked_at?: string | null
           status?: string
           trial_days?: number
           trial_start?: string | null
           user_name?: string | null
-          wa_number?: string
+          wa_number?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "licenses_app_user_id_fkey"
+            columns: ["app_user_id"]
+            isOneToOne: false
+            referencedRelation: "app_users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payments: {
         Row: {

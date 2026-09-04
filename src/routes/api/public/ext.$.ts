@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { hashKey } from "@/lib/license-utils";
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
@@ -87,70 +88,150 @@ async function handle(path: string, request: Request): Promise<Response> {
       return json({ valid: !expired && data.status === "active", isTrial: false, isNew: false });
     }
 
-    case "license/verify": {
-      const key = z.string().min(4).max(64).safeParse(url.searchParams.get("key") ?? "");
-      if (!key.success) return json({ valid: false, reason: "License key required" });
-      const { data } = await supabase
-        .from("licenses")
-        .select("*")
-        .eq("license_key", key.data)
-        .maybeSingle();
-      if (!data) return json({ valid: false, reason: "Invalid license key." });
-      if (data.status !== "active") return json({ valid: false, reason: "License expired or disabled." });
-      if (data.plan !== "lifetime" && data.expires_at && new Date(data.expires_at) < new Date()) {
-        await supabase.from("licenses").update({ status: "expired" }).eq("id", data.id);
-        return json({ valid: false, reason: "License has expired." });
+    // ---- Secure license activation / validation (hashed keys + device binding) ----
+    case "license/activate":
+    case "license/validate": {
+      if (request.method !== "POST") return json({ valid: false }, 405);
+      const body = z
+        .object({
+          key: z.string().min(8).max(64),
+          deviceId: z.string().min(6).max(120),
+          label: z.string().max(120).optional(),
+          waNumber: z.string().max(20).optional(),
+        })
+        .parse(await request.json());
+
+      const hash = await hashKey(body.key);
+      const { data: lic } = await supabase.from("licenses").select("*").eq("key_hash", hash).maybeSingle();
+      if (!lic) return json({ valid: false, status: "invalid", reason: "Invalid Wapilot AI license key." });
+
+      const blockedStatuses: Record<string, string> = {
+        revoked: "This license has been revoked.",
+        blocked: "This license is blocked.",
+        suspended: "This license is suspended. Contact support.",
+        expired: "This license has expired.",
+      };
+      if (blockedStatuses[lic.status])
+        return json({ valid: false, status: lic.status, reason: blockedStatuses[lic.status] });
+
+      const isActivation = path === "license/activate";
+      let status = lic.status;
+      let expiresAt = lic.expires_at as string | null;
+
+      if (status === "inactive") {
+        if (!isActivation)
+          return json({ valid: false, status: "inactive", reason: "License is not activated yet." });
+        status = "active";
+        expiresAt = lic.duration_days ? addDays(new Date(), lic.duration_days).toISOString() : null;
       }
+
+      if (lic.plan !== "lifetime" && expiresAt && new Date(expiresAt) < new Date()) {
+        await supabase.from("licenses").update({ status: "expired" }).eq("id", lic.id);
+        return json({ valid: false, status: "expired", reason: "This license has expired." });
+      }
+
+      const { data: device } = await supabase
+        .from("license_devices")
+        .select("id")
+        .eq("license_id", lic.id)
+        .eq("device_id", body.deviceId)
+        .maybeSingle();
+
+      if (!device) {
+        if (!isActivation)
+          return json({ valid: false, status: "unbound", reason: "Device not activated for this license." });
+        const { count } = await supabase
+          .from("license_devices")
+          .select("id", { count: "exact", head: true })
+          .eq("license_id", lic.id);
+        if ((count ?? 0) >= (lic.max_devices ?? 1))
+          return json({
+            valid: false,
+            status: "device_limit",
+            reason: `Device limit reached (${count}/${lic.max_devices}). Deactivate another device first.`,
+          });
+        await supabase.from("license_devices").insert({
+          license_id: lic.id,
+          device_id: body.deviceId,
+          label: body.label ?? null,
+          wa_number: body.waNumber ?? null,
+        });
+      } else {
+        await supabase
+          .from("license_devices")
+          .update({ last_seen: new Date().toISOString(), wa_number: body.waNumber ?? null })
+          .eq("id", device.id);
+      }
+
+      const { count: used } = await supabase
+        .from("license_devices")
+        .select("id", { count: "exact", head: true })
+        .eq("license_id", lic.id);
+
+      await supabase
+        .from("licenses")
+        .update({
+          status,
+          expires_at: expiresAt,
+          activated_at: lic.activated_at ?? new Date().toISOString(),
+          current_devices: used ?? 0,
+          last_validation: new Date().toISOString(),
+          wa_number: lic.wa_number ?? body.waNumber ?? null,
+        })
+        .eq("id", lic.id);
+
+      if (isActivation && lic.status === "inactive")
+        await supabase.from("analytics_events").insert({
+          wa_number: body.waNumber ?? null,
+          event_type: "license_activated",
+          meta: { plan: lic.plan },
+        });
+
       return json({
         valid: true,
-        plan: data.plan,
-        waNumber: data.wa_number,
-        expiresAt: data.expires_at,
+        status: "active",
+        plan: lic.plan,
+        user: lic.user_name ?? null,
+        business: lic.business_name ?? null,
+        expiresAt: lic.plan === "lifetime" ? null : expiresAt,
+        devices: { used: used ?? 0, max: lic.max_devices ?? 1 },
       });
     }
 
-    case "license/bind": {
+    case "license/deactivate": {
       if (request.method !== "POST") return json({ success: false }, 405);
       const body = z
-        .object({ key: z.string().min(4).max(64), waNumber: waSchema })
+        .object({ key: z.string().min(8).max(64), deviceId: z.string().min(6).max(120) })
         .parse(await request.json());
-      const { data: lic } = await supabase
-        .from("licenses")
-        .select("*")
-        .eq("license_key", body.key)
-        .maybeSingle();
+      const hash = await hashKey(body.key);
+      const { data: lic } = await supabase.from("licenses").select("id").eq("key_hash", hash).maybeSingle();
       if (!lic) return json({ success: false, reason: "Invalid license key." });
-      if (lic.status !== "active") return json({ success: false, reason: "License not active." });
-      if (lic.wa_number !== body.waNumber) {
-        // Key belongs to a placeholder row (admin-issued key): bind it to this number
-        if (lic.wa_number.startsWith("UNBOUND:")) {
-          await supabase
-            .from("licenses")
-            .update({ wa_number: body.waNumber, activated_at: new Date().toISOString() })
-            .eq("id", lic.id);
-          await supabase.from("analytics_events").insert({
-            wa_number: body.waNumber,
-            event_type: "license_bind",
-            meta: { plan: lic.plan },
-          });
-          return json({ success: true, plan: lic.plan });
-        }
-        return json({ success: false, reason: "Key already bound to another number." });
-      }
-      return json({ success: true, plan: lic.plan });
+      await supabase.from("license_devices").delete().eq("license_id", lic.id).eq("device_id", body.deviceId);
+      const { count } = await supabase
+        .from("license_devices")
+        .select("id", { count: "exact", head: true })
+        .eq("license_id", lic.id);
+      await supabase.from("licenses").update({ current_devices: count ?? 0 }).eq("id", lic.id);
+      return json({ success: true, devices: { used: count ?? 0 } });
     }
 
-    case "license/fetch": {
-      const waNumber = waSchema.safeParse(url.searchParams.get("waNumber") ?? "");
-      if (!waNumber.success) return json({ valid: false });
-      const { data } = await supabase
+    case "device/list": {
+      if (request.method !== "POST") return json({ success: false }, 405);
+      const body = z.object({ key: z.string().min(8).max(64) }).parse(await request.json());
+      const hash = await hashKey(body.key);
+      const { data: lic } = await supabase
         .from("licenses")
-        .select("*")
-        .eq("wa_number", waNumber.data)
+        .select("id,max_devices")
+        .eq("key_hash", hash)
         .maybeSingle();
-      if (!data || !data.license_key) return json({ valid: false });
-      return json({ valid: data.status === "active", key: data.license_key, plan: data.plan });
+      if (!lic) return json({ success: false, reason: "Invalid license key." });
+      const { data: devices } = await supabase
+        .from("license_devices")
+        .select("device_id,label,last_seen")
+        .eq("license_id", lic.id);
+      return json({ success: true, max: lic.max_devices, devices: devices ?? [] });
     }
+
 
     case "payment/submit": {
       if (request.method !== "POST") return json({ success: false }, 405);

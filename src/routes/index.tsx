@@ -41,13 +41,13 @@ export { getPublicSettings };
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "WaReply Pro — WhatsApp Automation for Business" },
+      { title: "Wapilot AI — Automate Conversations. Grow Your Business." },
       {
         name: "description",
         content:
-          "WaReply Pro দিয়ে WhatsApp-এ broadcast, auto-reply, WooCommerce order alert ও Telegram notification — সব এক Chrome extension-এ।",
+          "Wapilot AI দিয়ে WhatsApp-এ broadcast, auto-reply, WooCommerce order alert ও Telegram notification — সব এক Chrome extension-এ।",
       },
-      { property: "og:title", content: "WaReply Pro — WhatsApp Automation for Business" },
+      { property: "og:title", content: "Wapilot AI — Automate Conversations. Grow Your Business." },
       {
         property: "og:description",
         content: "Broadcast, auto-reply, WooCommerce orders & Telegram alerts — সব এক জায়গায়।",
@@ -102,10 +102,13 @@ function LandingPage() {
       <header className="border-b border-border">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[var(--glow-primary)]">
               <MessageSquare className="h-5 w-5" />
             </div>
-            <span className="text-lg font-bold">WaReply Pro</span>
+            <div className="leading-tight">
+              <span className="text-lg font-bold">Wapilot AI</span>
+              <p className="text-[10px] text-muted-foreground">WhatsApp Business Automation</p>
+            </div>
           </div>
           <nav className="flex items-center gap-3">
             <Link to="/download" className="text-sm text-muted-foreground hover:text-foreground">
@@ -125,13 +128,20 @@ function LandingPage() {
 
       <main className="mx-auto max-w-5xl px-4">
         <section className="py-16 text-center">
+          <p className="mb-3 inline-block rounded-full border border-border bg-secondary px-4 py-1 text-xs text-primary">
+            Automate. Reply. Grow.
+          </p>
           <h1 className="mx-auto max-w-2xl text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-            WhatsApp Business Automation — <span className="text-primary">এক Extension-এই সব</span>
+            Automate Conversations.{" "}
+            <span className="bg-[image:var(--gradient-primary)] bg-clip-text text-transparent">
+              Grow Your Business.
+            </span>
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-lg text-muted-foreground">
-            Broadcast, auto-reply, WooCommerce order notification আর Telegram alert — আপনার ব্যবসার WhatsApp
-            হবে সম্পূর্ণ অটোমেটিক।
+            Wapilot AI একটি শক্তিশালী WhatsApp business automation platform — intelligent automation, customer
+            conversation, commerce আর browser-based WhatsApp management এক সিস্টেমে।
           </p>
+
           <div className="mt-8 flex justify-center gap-3">
             <Link to="/download">
               <Button size="lg">
@@ -196,7 +206,7 @@ function LandingPage() {
       </main>
 
       <footer className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} WaReply Pro — Professional WhatsApp Automation
+        © {new Date().getFullYear()} Wapilot AI — Professional WhatsApp Automation
       </footer>
     </div>
   );

@@ -13,10 +13,10 @@ import { Copy } from "lucide-react";
 export const Route = createFileRoute("/pay")({
   head: () => ({
     meta: [
-      { title: "লাইসেন্স কিনুন — WaReply Pro" },
-      { name: "description", content: "bKash বা Nagad-এ payment করে WaReply Pro লাইসেন্স সক্রিয় করুন।" },
-      { property: "og:title", content: "লাইসেন্স কিনুন — WaReply Pro" },
-      { property: "og:description", content: "bKash বা Nagad-এ payment করে WaReply Pro লাইসেন্স সক্রিয় করুন।" },
+      { title: "লাইসেন্স কিনুন — Wapilot AI" },
+      { name: "description", content: "bKash বা Nagad-এ payment করে Wapilot AI লাইসেন্স সক্রিয় করুন।" },
+      { property: "og:title", content: "লাইসেন্স কিনুন — Wapilot AI" },
+      { property: "og:description", content: "bKash বা Nagad-এ payment করে Wapilot AI লাইসেন্স সক্রিয় করুন।" },
     ],
   }),
   component: PayPage,
