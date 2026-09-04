@@ -53,13 +53,15 @@ function AuthPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <Card className="w-full max-w-sm">
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[420px] hero-glow" />
+      <Card className="card-glow relative w-full max-w-sm">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-[image:var(--gradient-primary)] text-primary-foreground shadow-[var(--glow-primary)]">
             <MessageSquare className="h-6 w-6" />
           </div>
           <CardTitle className="text-xl">Wapilot AI Admin</CardTitle>
+
           <CardDescription>
             {mode === "login" ? "আপনার অ্যাকাউন্টে লগইন করুন" : "নতুন admin অ্যাকাউন্ট তৈরি করুন"}
           </CardDescription>
