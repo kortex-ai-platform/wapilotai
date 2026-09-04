@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download, Chrome, FolderOpen, ToggleRight, MousePointerClick } from "lucide-react";
 import { useState } from "react";
+import { SiteHeader, SiteFooter } from "@/components/landing/SiteChrome";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/download")({
@@ -65,7 +66,7 @@ function DownloadPage() {
           </Button>
         </div>
 
-        <Card className="mt-10">
+        <Card className="card-glow relative mt-10">
           <CardHeader>
             <CardTitle>Install করার নিয়ম</CardTitle>
           </CardHeader>
@@ -96,6 +97,7 @@ function DownloadPage() {
           </Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
