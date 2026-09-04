@@ -77,9 +77,9 @@ function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-background">
-      <aside className="flex w-56 shrink-0 flex-col border-r border-border bg-card">
+      <aside className="flex w-56 shrink-0 flex-col border-r border-border bg-sidebar">
         <div className="flex items-center gap-2 border-b border-border px-4 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[var(--glow-primary)]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[image:var(--gradient-primary)] text-primary-foreground shadow-[var(--glow-primary)]">
             <Bot className="h-4 w-4" />
           </div>
           <div className="leading-tight">
@@ -97,8 +97,8 @@ function AdminLayout() {
                 className={cn(
                   "flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors",
                   active
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                    ? "bg-primary/15 text-primary ring-1 ring-primary/30"
+                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
                 <item.icon className="h-4 w-4" />
@@ -110,13 +110,13 @@ function AdminLayout() {
         <div className="border-t border-border p-3">
           <Link
             to="/"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent"
+            className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
           >
             <BarChart3 className="h-4 w-4" /> Website
           </Link>
           <button
             onClick={() => supabase.auth.signOut().then(() => navigate({ to: "/auth" }))}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-accent"
+            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
           >
             <LogOut className="h-4 w-4" /> Logout
           </button>
