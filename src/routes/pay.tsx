@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Copy } from "lucide-react";
+import { SiteHeader, SiteFooter } from "@/components/landing/SiteChrome";
 
 export const Route = createFileRoute("/pay")({
   head: () => ({
@@ -74,14 +75,18 @@ function PayPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="mx-auto max-w-2xl space-y-6 px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-3xl font-bold">লাইসেন্স কিনুন</h1>
+      <SiteHeader />
+      <main className="relative mx-auto max-w-2xl space-y-6 px-4 py-16">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 hero-glow" />
+        <div className="relative text-center">
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            লাইসেন্স <span className="gradient-text">কিনুন</span>
+          </h1>
           <p className="mt-2 text-muted-foreground">bKash/Nagad-এ Send Money করে নিচের ফর্মটি পূরণ করুন</p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
+        <div className="relative grid gap-4 md:grid-cols-2">
+          <Card className="card-glow">
             <CardHeader>
               <CardTitle className="text-base">bKash (Send Money)</CardTitle>
               <CardDescription>{settings?.["bkash_instruction"]}</CardDescription>
@@ -95,7 +100,7 @@ function PayPage() {
               </button>
             </CardContent>
           </Card>
-          <Card>
+          <Card className="card-glow">
             <CardHeader>
               <CardTitle className="text-base">Nagad (Send Money)</CardTitle>
               <CardDescription>{settings?.["nagad_instruction"]}</CardDescription>
@@ -111,7 +116,7 @@ function PayPage() {
           </Card>
         </div>
 
-        <Card>
+        <Card className="relative">
           <CardHeader>
             <CardTitle className="text-base">Payment তথ্য জমা দিন</CardTitle>
           </CardHeader>
@@ -165,6 +170,7 @@ function PayPage() {
           </Link>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }
