@@ -2,13 +2,13 @@ import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tan
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { checkIsAdmin } from "@/lib/admin.functions";
-import { LayoutDashboard, KeyRound, CreditCard, Settings, LogOut, MessageSquare, BarChart3 } from "lucide-react";
+import { LayoutDashboard, KeyRound, CreditCard, Settings, LogOut, Bot, Users, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin Dashboard — WaReply Pro" },
+      { title: "Admin Dashboard — Wapilot AI" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/admin")({
 const navItems = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/admin/licenses", label: "Licenses", icon: KeyRound },
+  { to: "/admin/users", label: "Users", icon: Users },
   { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ] as const;
@@ -78,10 +79,13 @@ function AdminLayout() {
     <div className="flex min-h-screen bg-background">
       <aside className="flex w-56 shrink-0 flex-col border-r border-border bg-card">
         <div className="flex items-center gap-2 border-b border-border px-4 py-4">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <MessageSquare className="h-4 w-4" />
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-[var(--glow-primary)]">
+            <Bot className="h-4 w-4" />
           </div>
-          <span className="font-semibold">WaReply Pro</span>
+          <div className="leading-tight">
+            <p className="font-semibold">Wapilot AI</p>
+            <p className="text-[10px] text-muted-foreground">WhatsApp Business Automation</p>
+          </div>
         </div>
         <nav className="flex-1 space-y-1 p-3">
           {navItems.map((item) => {
