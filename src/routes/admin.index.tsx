@@ -2,108 +2,110 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getOverview, getAnalytics } from "@/lib/admin.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, KeyRound, CreditCard, Coins, Activity, Timer } from "lucide-react";
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
 } from "recharts";
+import { Activity, CreditCard, KeyRound, Laptop, Users, Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/admin/")({
-  head: () => ({ meta: [{ title: "Overview — WaReply Pro Admin" }, { name: "robots", content: "noindex" }] }),
-  component: AdminOverview,
+  head: () => ({
+    meta: [{ title: "Overview — Wapilot AI Admin" }, { name: "robots", content: "noindex" }],
+  }),
+  component: OverviewPage,
 });
 
-function AdminOverview() {
-  const overview = useQuery({ queryKey: ["admin-overview"], queryFn: () => getOverview() });
-  const analytics = useQuery({ queryKey: ["admin-analytics"], queryFn: () => getAnalytics() });
+function Metric({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) {
+  return (
+    <Card className="border-border/70">
+      <CardContent className="flex items-center gap-4 p-5">
+        <div className="rounded-xl bg-primary/10 p-3 text-primary">
+          <Icon className="h-5 w-5" />
+        </div>
+        <div>
+          <p className="text-sm text-muted-foreground">{label}</p>
+          <p className="text-2xl font-bold">{value}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
-  const o = overview.data;
-  const stats = [
-    { label: "মোট Licenses", value: o?.totalLicenses, icon: KeyRound },
-    { label: "Active Paid", value: o?.activePaid, icon: Users },
-    { label: "Active Trials", value: o?.activeTrials, icon: Timer },
-    { label: "Pending Payments", value: o?.pendingPayments, icon: CreditCard },
-    { label: "মোট Revenue (৳)", value: o?.totalRevenue?.toLocaleString(), icon: Coins },
-    { label: "Events (30d)", value: o?.totalEvents, icon: Activity },
-  ];
+function OverviewPage() {
+  const { data: o } = useQuery({ queryKey: ["admin-overview"], queryFn: () => getOverview() });
+  const { data: a } = useQuery({ queryKey: ["admin-analytics"], queryFn: () => getAnalytics() });
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Overview</h1>
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
-        {stats.map((s) => (
-          <Card key={s.label}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">{s.label}</CardTitle>
-              <s.icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{overview.isLoading ? "…" : (s.value ?? 0)}</div>
-            </CardContent>
-          </Card>
-        ))}
+      <div>
+        <h1 className="text-2xl font-bold">Overview</h1>
+        <p className="text-sm text-muted-foreground">Wapilot AI — WhatsApp Business Automation</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Metric label="Active licenses" value={o?.activeLicenses ?? "—"} icon={KeyRound} />
+        <Metric label="Unused licenses" value={o?.unusedLicenses ?? "—"} icon={KeyRound} />
+        <Metric label="Total users" value={o?.totalUsers ?? "—"} icon={Users} />
+        <Metric label="Active devices" value={o?.totalDevices ?? "—"} icon={Laptop} />
+        <Metric label="Pending payments" value={o?.pendingPayments ?? "—"} icon={CreditCard} />
+        <Metric label="Revenue (BDT)" value={o ? o.totalRevenue.toLocaleString() : "—"} icon={Wallet} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">দৈনিক Activity (৩০ দিন)</CardTitle>
+            <CardTitle className="text-base">Activity — last 30 days</CardTitle>
           </CardHeader>
           <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={analytics.data?.daily ?? []}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" fontSize={11} />
-                <YAxis fontSize={11} allowDecimals={false} />
-                <Tooltip />
-                <Area type="monotone" dataKey="events" stroke="var(--color-primary)" fill="var(--color-primary)" fillOpacity={0.2} name="Events" />
-                <Area type="monotone" dataKey="users" stroke="var(--color-chart-2)" fill="var(--color-chart-2)" fillOpacity={0.15} name="Active users" />
+              <AreaChart data={a?.daily ?? []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="date" fontSize={11} stroke="var(--muted-foreground)" />
+                <YAxis fontSize={11} stroke="var(--muted-foreground)" />
+                <Tooltip
+                  contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }}
+                />
+                <Area type="monotone" dataKey="events" stroke="var(--chart-1)" fill="var(--chart-1)" fillOpacity={0.2} />
+                <Area type="monotone" dataKey="users" stroke="var(--chart-2)" fill="var(--chart-2)" fillOpacity={0.15} />
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
+
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">দৈনিক Revenue ৳ (৩০ দিন)</CardTitle>
+            <CardTitle className="text-base">Event types</CardTitle>
           </CardHeader>
           <CardContent className="h-64">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={analytics.data?.daily ?? []}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                <XAxis dataKey="date" fontSize={11} />
-                <YAxis fontSize={11} allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="revenue" fill="var(--color-chart-2)" name="Revenue ৳" radius={[4, 4, 0, 0]} />
+              <BarChart data={a?.byType ?? []}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+                <XAxis dataKey="type" fontSize={11} stroke="var(--muted-foreground)" />
+                <YAxis fontSize={11} stroke="var(--muted-foreground)" />
+                <Tooltip
+                  contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8 }}
+                />
+                <Bar dataKey="count" fill="var(--chart-1)" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
 
-      {analytics.data && analytics.data.byType.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Event ধরন (৩০ দিন)</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3">
-              {analytics.data.byType.map((t) => (
-                <div key={t.name} className="rounded-lg border border-border px-4 py-2 text-sm">
-                  <span className="font-semibold">{t.value}</span>{" "}
-                  <span className="text-muted-foreground">{t.name}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Activity className="h-4 w-4" /> Total events (30 days): {o?.totalEvents ?? "—"}
+          </CardTitle>
+        </CardHeader>
+      </Card>
     </div>
   );
 }
