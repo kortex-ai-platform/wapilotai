@@ -48,12 +48,17 @@ function DownloadPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <main className="mx-auto max-w-2xl px-4 py-16">
-        <h1 className="text-center text-3xl font-bold">Wapilot AI Extension</h1>
-        <p className="mt-2 text-center text-muted-foreground">
+      <SiteHeader />
+      <main className="relative mx-auto max-w-2xl px-4 py-16">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 hero-glow" />
+        <h1 className="relative text-center text-4xl font-extrabold tracking-tight">
+          Wapilot AI <span className="gradient-text">Extension</span>
+        </h1>
+        <p className="relative mt-2 text-center text-muted-foreground">
           Chrome, Edge, Brave, Arc, Opera — যেকোনো Chromium browser-এ চলবে
         </p>
-        <div className="mt-8 text-center">
+        <div className="relative mt-8 text-center">
+
           <Button size="lg" onClick={download} disabled={downloading}>
             <Download className="mr-2 h-5 w-5" />
             {downloading ? "ডাউনলোড হচ্ছে…" : "Extension ডাউনলোড (ZIP)"}
