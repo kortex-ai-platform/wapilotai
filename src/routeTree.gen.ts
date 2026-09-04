@@ -18,6 +18,7 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminLicensesRouteImport } from './routes/admin.licenses'
 import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminUsersRouteImport } from './routes/admin.users'
 import { Route as ApiPublicExtSplatRouteImport } from './routes/api/public/ext.$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -65,6 +66,11 @@ const AdminSettingsRoute = AdminSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicExtSplatRoute = ApiPublicExtSplatRouteImport.update({
   id: '/api/public/ext/$',
   path: '/api/public/ext/$',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/admin/licenses': typeof AdminLicensesRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/ext/$': typeof ApiPublicExtSplatRoute
 }
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/admin/licenses': typeof AdminLicensesRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/ext/$': typeof ApiPublicExtSplatRoute
 }
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/admin/licenses': typeof AdminLicensesRoute
   '/admin/payments': typeof AdminPaymentsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/users': typeof AdminUsersRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/ext/$': typeof ApiPublicExtSplatRoute
 }
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/admin/licenses'
     | '/admin/payments'
     | '/admin/settings'
+    | '/admin/users'
     | '/admin/'
     | '/api/public/ext/$'
   fileRoutesByTo: FileRoutesByTo
@@ -129,6 +139,7 @@ export interface FileRouteTypes {
     | '/admin/licenses'
     | '/admin/payments'
     | '/admin/settings'
+    | '/admin/users'
     | '/admin'
     | '/api/public/ext/$'
   id:
@@ -141,6 +152,7 @@ export interface FileRouteTypes {
     | '/admin/licenses'
     | '/admin/payments'
     | '/admin/settings'
+    | '/admin/users'
     | '/admin/'
     | '/api/public/ext/$'
   fileRoutesById: FileRoutesById
@@ -219,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminSettingsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/users': {
+      id: '/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/ext/$': {
       id: '/api/public/ext/$'
       path: '/api/public/ext/$'
@@ -233,6 +252,7 @@ interface AdminRouteChildren {
   AdminLicensesRoute: typeof AdminLicensesRoute
   AdminPaymentsRoute: typeof AdminPaymentsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminUsersRoute: typeof AdminUsersRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
@@ -240,6 +260,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminLicensesRoute: AdminLicensesRoute,
   AdminPaymentsRoute: AdminPaymentsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminUsersRoute: AdminUsersRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
 
