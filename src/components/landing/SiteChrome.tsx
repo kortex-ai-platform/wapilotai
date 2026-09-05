@@ -38,6 +38,7 @@ export function SiteHeader() {
           </a>
         </nav>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Link to="/auth" className="hidden sm:block">
             <Button size="sm" variant="ghost">
               Admin
@@ -47,6 +48,7 @@ export function SiteHeader() {
             <Button size="sm">Get started</Button>
           </Link>
         </div>
+
       </div>
     </header>
   );
