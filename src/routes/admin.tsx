@@ -107,7 +107,11 @@ function AdminLayout() {
             );
           })}
         </nav>
-        <div className="border-t border-border p-3">
+        <div className="space-y-1 border-t border-border p-3">
+          <div className="flex items-center justify-between gap-2 px-1 pb-1">
+            <span className="text-xs text-muted-foreground">Theme</span>
+            <ThemeToggle />
+          </div>
           <Link
             to="/"
             className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-secondary hover:text-foreground"
@@ -121,6 +125,7 @@ function AdminLayout() {
             <LogOut className="h-4 w-4" /> Logout
           </button>
         </div>
+
       </aside>
       <main className="flex-1 overflow-auto p-6">
         <Outlet />
