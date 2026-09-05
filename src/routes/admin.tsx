@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { checkIsAdmin } from "@/lib/admin.functions";
 import { LayoutDashboard, KeyRound, CreditCard, Settings, LogOut, Bot, Users, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
