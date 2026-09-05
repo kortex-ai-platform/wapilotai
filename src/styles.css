@@ -173,11 +173,23 @@
     border-color: var(--color-border);
   }
 
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    transition:
+      background-color 0.25s ease,
+      color 0.25s ease;
   }
 }
+
 
 @keyframes wp-fade-up {
   from {
