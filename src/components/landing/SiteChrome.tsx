@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { MessageSquare } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
