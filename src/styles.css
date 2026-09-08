@@ -272,7 +272,7 @@
 }
 
 @utility reveal {
-  opacity: 0;
+  opacity: 1;
 }
 
 @utility reveal-in {
