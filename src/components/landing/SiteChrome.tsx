@@ -68,7 +68,9 @@ export function SiteHeader({ landing = false }: { landing?: boolean }) {
       {menuOpen && (
         <nav className="border-t border-border/60 bg-background/95 px-4 py-3 lg:hidden">
           <div className="mx-auto grid max-w-7xl gap-1 text-sm">
-            {[["Features", "#features"], ["How it works", "#how"], ["Pricing", "#pricing"], ["FAQ", "#faq"]].map(([label, hash]) => (
+            {([[
+              "Features", "#features"
+            ], ["How it works", "#how"], ["Pricing", "#pricing"], ["FAQ", "#faq"]] as const).map(([label, hash]) => (
               <a key={hash} href={homeHref(hash)} className="rounded-md px-3 py-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setMenuOpen(false)}>
                 {label}
               </a>

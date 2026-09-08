@@ -23,6 +23,9 @@ import {
   KeyRound,
   Rocket,
   Sparkles,
+  Zap,
+  LockKeyhole,
+  Headphones,
 } from "lucide-react";
 
 const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
@@ -124,53 +127,60 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader />
+      <SiteHeader landing />
 
       <main>
         {/* Hero */}
-        <section className="relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-[560px] hero-glow" />
-          <div className="relative mx-auto max-w-6xl px-4 pt-20 pb-14 text-center">
+        <section className="relative overflow-hidden border-b border-border/50">
+          <div className="pointer-events-none absolute inset-0 landing-grid opacity-40" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[680px] hero-glow" />
+          <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-16 text-center sm:px-6 md:pt-24">
             <Reveal>
-              <span className="inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-4 py-1.5 text-xs text-muted-foreground">
-                <Sparkles className="h-3.5 w-3.5 text-success" /> Automate. Reply. Grow.
+              <span className="glass-panel inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs text-muted-foreground">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" /> AI-powered WhatsApp business automation
               </span>
             </Reveal>
             <Reveal delay={80}>
-              <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold leading-[1.1] tracking-tight md:text-6xl">
-                The All-in-One WhatsApp <span className="gradient-text">Automation Platform</span>
+              <h1 className="mx-auto mt-7 max-w-4xl text-4xl font-extrabold leading-[1.12] tracking-normal sm:text-5xl md:text-7xl">
+                আপনার ব্যবসাকে আরও স্মার্ট করুন <span className="gradient-text">Wapilot AI</span> এর সাথে
               </h1>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
-                Wapilot AI intelligent automation, customer conversation, commerce আর browser-based WhatsApp
-                management — সব এক corporate-grade সিস্টেমে নিয়ে আসে।
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg">
+                Broadcast, smart auto-reply, WooCommerce order alert ও customer conversation—সবকিছু একটি নিরাপদ browser-based automation platform-এ।
               </p>
             </Reveal>
             <Reveal delay={240}>
               <div className="mt-9 flex flex-wrap justify-center gap-3">
                 <Link to="/download">
-                  <Button size="lg" className="shadow-[var(--glow-primary)]">
+                  <Button size="lg" className="button-shine h-12 px-7 shadow-[var(--glow-primary)]">
                     <Download className="mr-2 h-5 w-5" /> Extension ডাউনলোড
                   </Button>
                 </Link>
                 <Link to="/pay">
-                  <Button size="lg" variant="outline">
+                  <Button size="lg" variant="outline" className="h-12 bg-background/30 px-7 backdrop-blur-md">
                     লাইসেন্স কিনুন <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               </div>
             </Reveal>
 
-            <Reveal delay={320}>
-              <div className="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
+            <Reveal delay={300}>
+              <div className="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+                {["Secure license verification", "No card required", "Setup in minutes"].map((item) => (
+                  <span key={item} className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-success" />{item}</span>
+                ))}
+              </div>
+            </Reveal>
+            <Reveal delay={360}>
+              <div className="glass-panel mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-lg md:grid-cols-4">
                 {[
                   { v: 100, s: "K+", d: 0, l: "Messages / month" },
                   { v: 50, s: "M+", d: 0, l: "Automated replies" },
                   { v: 99.9, s: "%", d: 1, l: "Uptime" },
                   { v: 4.9, s: "", d: 1, l: "User rating" },
                 ].map((s) => (
-                  <div key={s.l} className="bg-surface px-4 py-6">
+                  <div key={s.l} className="bg-surface/75 px-4 py-5">
                     <p className="text-2xl font-extrabold text-primary">
                       <CountUp value={s.v} suffix={s.s} decimals={s.d} />
                     </p>
@@ -183,9 +193,9 @@ function LandingPage() {
         </section>
 
         {/* Dashboard preview */}
-        <section className="mx-auto max-w-6xl px-4 py-16">
+        <section className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
           <Reveal className="text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-success">Command center</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-success">Live command center</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
               Your control panel, <span className="gradient-text">beautifully crafted</span>
             </h2>
@@ -193,13 +203,14 @@ function LandingPage() {
               User, license, device ও revenue — সবকিছু একটি পরিষ্কার corporate dashboard-এ।
             </p>
           </Reveal>
-          <Reveal delay={120} className="mt-10">
+          <Reveal delay={120} className="mx-auto mt-12 max-w-6xl">
             <DashboardPreview />
           </Reveal>
         </section>
 
         {/* How it works */}
-        <section id="how" className="mx-auto max-w-6xl px-4 py-16">
+        <section id="how" className="border-y border-border/50 bg-surface/35 py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Reveal className="text-center">
             <p className="text-xs uppercase tracking-[0.25em] text-success">Process</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
@@ -209,7 +220,7 @@ function LandingPage() {
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {steps.map((s, i) => (
               <Reveal key={s.title} delay={i * 100}>
-                <div className="card-glow h-full rounded-2xl p-6">
+                <div className="card-glow h-full rounded-lg p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/12 text-primary">
                       <s.icon className="h-5 w-5" />
@@ -222,10 +233,12 @@ function LandingPage() {
               </Reveal>
             ))}
           </div>
+          <div className="mt-10 text-center"><Link to="/download"><Button className="button-shine">শুরু করুন <ArrowRight /></Button></Link></div>
+          </div>
         </section>
 
         {/* Use cases */}
-        <section id="features" className="mx-auto max-w-6xl px-4 py-16">
+        <section id="features" className="mx-auto max-w-7xl px-4 py-24 sm:px-6">
           <Reveal className="text-center">
             <p className="text-xs uppercase tracking-[0.25em] text-success">Capabilities</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
@@ -235,7 +248,7 @@ function LandingPage() {
           <div className="mt-10 grid gap-4 md:grid-cols-3">
             {useCases.map((f, i) => (
               <Reveal key={f.title} delay={(i % 3) * 90}>
-                <div className="card-glow h-full rounded-2xl p-6">
+                <div className="card-glow h-full rounded-lg p-6">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/12 text-success">
                     <f.icon className="h-5 w-5" />
                   </div>
@@ -248,7 +261,8 @@ function LandingPage() {
         </section>
 
         {/* Pricing */}
-        <section id="pricing" className="mx-auto max-w-6xl px-4 py-16">
+        <section id="pricing" className="border-y border-border/50 bg-surface/35 py-24">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <Reveal className="text-center">
             <p className="text-xs uppercase tracking-[0.25em] text-success">Pricing</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
@@ -260,7 +274,7 @@ function LandingPage() {
             {plans.map((p, i) => (
               <Reveal key={p.name} delay={i * 100}>
                 <div
-                  className={`card-glow relative h-full rounded-2xl p-6 ${
+                   className={`card-glow relative h-full rounded-lg p-6 ${
                     p.popular ? "border-primary/60 shadow-[var(--glow-primary)]" : ""
                   }`}
                 >
@@ -293,10 +307,11 @@ function LandingPage() {
               </Reveal>
             ))}
           </div>
+          </div>
         </section>
 
         {/* FAQ */}
-        <section id="faq" className="mx-auto max-w-3xl px-4 py-16">
+        <section id="faq" className="mx-auto max-w-3xl px-4 py-24">
           <Reveal className="text-center">
             <p className="text-xs uppercase tracking-[0.25em] text-success">Support</p>
             <h2 className="mt-3 text-3xl font-bold md:text-4xl">
@@ -304,7 +319,7 @@ function LandingPage() {
             </h2>
           </Reveal>
           <Reveal delay={120} className="mt-8">
-            <Accordion type="single" collapsible className="rounded-2xl border border-border bg-card px-4">
+            <Accordion type="single" collapsible className="glass-panel rounded-lg px-4">
               {faqs.map((f) => (
                 <AccordionItem key={f.q} value={f.q}>
                   <AccordionTrigger className="text-left text-sm">{f.q}</AccordionTrigger>
@@ -316,18 +331,18 @@ function LandingPage() {
         </section>
 
         {/* Final CTA */}
-        <section className="mx-auto max-w-6xl px-4 pb-20">
+        <section className="mx-auto max-w-7xl px-4 pb-24 sm:px-6">
           <Reveal>
-            <div className="relative overflow-hidden rounded-3xl border border-border bg-surface p-10 text-center">
+            <div className="glass-panel relative overflow-hidden rounded-lg p-8 text-left sm:p-12">
               <div className="pointer-events-none absolute inset-0 hero-glow" />
-              <div className="relative">
-                <h2 className="text-3xl font-extrabold md:text-4xl">
+              <div className="relative grid items-center gap-8 lg:grid-cols-[1fr_auto]">
+                <div><h2 className="text-3xl font-extrabold md:text-4xl">
                   Fast, easy, affordable <span className="gradient-text">WhatsApp automation</span>
                 </h2>
-                <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
+                <p className="mt-3 max-w-xl text-muted-foreground">
                   আজই Wapilot AI চালু করুন — ইনস্টল, অ্যাক্টিভেট, অটোমেট।
                 </p>
-                <div className="mt-7 flex flex-wrap justify-center gap-3">
+                </div><div className="flex flex-wrap gap-3 lg:justify-end">
                   <Link to="/download">
                     <Button size="lg">
                       <Download className="mr-2 h-5 w-5" /> এখনই ডাউনলোড
