@@ -1,4 +1,4 @@
-import { Activity, BarChart3, KeyRound, Users, Send, Bot } from "lucide-react";
+import { Activity, BarChart3, KeyRound, Users, Send, Bot, Radio, ShoppingBag } from "lucide-react";
 
 const bars = [42, 68, 55, 82, 60, 95, 74, 88, 63, 79, 91, 70];
 
@@ -6,12 +6,13 @@ export function DashboardPreview() {
   return (
     <div className="relative">
       <div className="pointer-events-none absolute -inset-10 rounded-[2rem] bg-[image:var(--gradient-hero)] blur-2xl" />
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-surface shadow-[var(--shadow-elevated)]">
+      <div className="relative overflow-hidden rounded-lg border border-border/80 bg-surface/90 shadow-[var(--shadow-elevated)] backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border bg-background/60 px-4 py-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-destructive/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-warning/70" />
           <span className="h-2.5 w-2.5 rounded-full bg-success/70" />
-          <span className="ml-3 text-xs text-muted-foreground">wapilot.ai / admin</span>
+          <span className="ml-3 text-xs text-muted-foreground">app.wapilot.ai / overview</span>
+          <span className="ml-auto hidden items-center gap-1.5 text-[10px] text-success sm:flex"><Radio className="h-3 w-3" /> Live operations</span>
         </div>
         <div className="grid grid-cols-[170px_1fr] max-sm:grid-cols-1">
           <aside className="border-r border-border bg-background/40 p-3 text-sm max-sm:hidden">
@@ -22,6 +23,7 @@ export function DashboardPreview() {
               { icon: Send, label: "Broadcast" },
               { icon: Bot, label: "Auto-reply" },
               { icon: Activity, label: "Analytics" },
+                { icon: ShoppingBag, label: "Payments" },
             ].map((i) => (
               <div
                 key={i.label}
@@ -34,21 +36,28 @@ export function DashboardPreview() {
               </div>
             ))}
           </aside>
-          <div className="p-4">
+          <div className="p-4 sm:p-5">
+            <div className="mb-4 flex items-center justify-between">
+              <div>
+                <p className="text-xs text-muted-foreground">Good afternoon, admin</p>
+                <p className="text-sm font-semibold">Business overview</p>
+              </div>
+              <span className="rounded-md border border-success/25 bg-success/10 px-2 py-1 text-[10px] text-success">All systems active</span>
+            </div>
             <div className="grid grid-cols-3 gap-3 max-sm:grid-cols-2">
               {[
                 { l: "Active users", v: "2,148", d: "+12%" },
                 { l: "Active licenses", v: "1,376", d: "+8%" },
                 { l: "Messages sent", v: "84,920", d: "+23%" },
               ].map((s) => (
-                <div key={s.l} className="rounded-xl border border-border bg-card p-3">
+                <div key={s.l} className="rounded-md border border-border bg-card/80 p-3">
                   <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{s.l}</p>
                   <p className="mt-1 text-lg font-bold">{s.v}</p>
                   <p className="text-[10px] text-success">{s.d}</p>
                 </div>
               ))}
             </div>
-            <div className="mt-3 rounded-xl border border-border bg-card p-4">
+            <div className="mt-3 rounded-md border border-border bg-card/80 p-4">
               <p className="mb-3 text-xs text-muted-foreground">Message volume — last 12 weeks</p>
               <div className="flex h-28 items-end gap-1.5">
                 {bars.map((b, i) => (
@@ -60,7 +69,7 @@ export function DashboardPreview() {
                 ))}
               </div>
             </div>
-            <div className="mt-3 rounded-xl border border-border bg-card p-3">
+            <div className="mt-3 rounded-md border border-border bg-card/80 p-3">
               {[
                 { k: "WAPI-PRO7-X9K2-••••", p: "Pro", s: "Active" },
                 { k: "WAPI-BUS3-4KD1-••••", p: "Business", s: "Active" },

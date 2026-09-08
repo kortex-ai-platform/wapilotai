@@ -39,7 +39,7 @@ export function Reveal({
     <div
       ref={ref}
       className={cn("reveal", shown && "reveal-in", className)}
-      style={shown && delay ? { animationDelay: `${delay}ms` } : undefined}
+      style={shown ? { animationDelay: `${delay}ms` } : undefined}
     >
       {children}
     </div>

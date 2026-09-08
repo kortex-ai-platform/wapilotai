@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
+import { Menu, MessageSquare, X } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useState } from "react";
 
 
 export function BrandMark({ compact = false }: { compact?: boolean }) {
@@ -18,24 +19,27 @@ export function BrandMark({ compact = false }: { compact?: boolean }) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ landing = false }: { landing?: boolean }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const homeHref = (hash: string) => (landing ? hash : `/${hash}`);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
+    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link to="/">
           <BrandMark />
         </Link>
-        <nav className="hidden items-center gap-7 text-sm text-muted-foreground md:flex">
-          <a href="#features" className="transition-colors hover:text-foreground">
+        <nav className="hidden items-center gap-7 text-sm text-muted-foreground lg:flex">
+          <a href={homeHref("#features")} className="transition-colors hover:text-foreground">
             Features
           </a>
-          <a href="#how" className="transition-colors hover:text-foreground">
+          <a href={homeHref("#how")} className="transition-colors hover:text-foreground">
             How it works
           </a>
-          <a href="#pricing" className="transition-colors hover:text-foreground">
+          <a href={homeHref("#pricing")} className="transition-colors hover:text-foreground">
             Pricing
           </a>
-          <a href="#faq" className="transition-colors hover:text-foreground">
+          <a href={homeHref("#faq")} className="transition-colors hover:text-foreground">
             FAQ
           </a>
         </nav>
@@ -47,11 +51,33 @@ export function SiteHeader() {
             </Button>
           </Link>
           <Link to="/download">
-            <Button size="sm">Get started</Button>
+            <Button size="sm" className="shadow-[var(--glow-primary)]">Get started</Button>
           </Link>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="lg:hidden"
+            aria-label={menuOpen ? "Close navigation" : "Open navigation"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X /> : <Menu />}
+          </Button>
         </div>
-
       </div>
+      {menuOpen && (
+        <nav className="border-t border-border/60 bg-background/95 px-4 py-3 lg:hidden">
+          <div className="mx-auto grid max-w-7xl gap-1 text-sm">
+            {([[
+              "Features", "#features"
+            ], ["How it works", "#how"], ["Pricing", "#pricing"], ["FAQ", "#faq"]] as const).map(([label, hash]) => (
+              <a key={hash} href={homeHref(hash)} className="rounded-md px-3 py-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground" onClick={() => setMenuOpen(false)}>
+                {label}
+              </a>
+            ))}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }
@@ -81,7 +107,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <a href="#faq" className="hover:text-foreground">
+              <a href="/#faq" className="hover:text-foreground">
                 FAQ
               </a>
             </li>
@@ -96,7 +122,7 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <a href="#features" className="hover:text-foreground">
+              <a href="/#features" className="hover:text-foreground">
                 Use cases
               </a>
             </li>
