@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Reveal, CountUp } from "@/components/Reveal";
+import { Reveal } from "@/components/Reveal";
 import { SiteHeader, SiteFooter } from "@/components/landing/SiteChrome";
 import { DashboardPreview } from "@/components/landing/DashboardPreview";
 import {
@@ -22,10 +22,6 @@ import {
   Puzzle,
   KeyRound,
   Rocket,
-  Sparkles,
-  Zap,
-  LockKeyhole,
-  Headphones,
 } from "lucide-react";
 
 const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
@@ -175,16 +171,14 @@ function LandingPage() {
             <Reveal delay={360}>
               <div className="glass-panel mx-auto mt-14 grid max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-lg md:grid-cols-4">
                 {[
-                  { v: 100, s: "K+", d: 0, l: "Messages / month" },
-                  { v: 50, s: "M+", d: 0, l: "Automated replies" },
-                  { v: 99.9, s: "%", d: 1, l: "Uptime" },
-                  { v: 4.9, s: "", d: 1, l: "User rating" },
-                ].map((s) => (
-                  <div key={s.l} className="bg-surface/75 px-4 py-5">
-                    <p className="text-2xl font-extrabold text-primary">
-                      <CountUp value={s.v} suffix={s.s} decimals={s.d} />
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">{s.l}</p>
+                  { value: "License", label: "Backend verified" },
+                  { value: "Device", label: "Securely bound" },
+                  { value: "Browser", label: "Local data" },
+                  { value: "Admin", label: "Full control" },
+                ].map((item) => (
+                  <div key={item.label} className="bg-surface/75 px-4 py-5">
+                    <p className="text-lg font-extrabold text-primary">{item.value}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{item.label}</p>
                   </div>
                 ))}
               </div>
