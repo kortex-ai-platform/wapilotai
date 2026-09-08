@@ -212,9 +212,41 @@
   }
 }
 
+@keyframes wp-scan {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(210%); }
+}
+
 @utility hero-glow {
   background-image: var(--gradient-hero);
   animation: wp-glow-pulse 8s ease-in-out infinite;
+}
+
+@utility landing-grid {
+  background-image: radial-gradient(color-mix(in oklab, var(--color-foreground) 16%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+}
+
+@utility glass-panel {
+  background: color-mix(in oklab, var(--color-surface) 72%, transparent);
+  border: 1px solid color-mix(in oklab, var(--color-border) 82%, transparent);
+  box-shadow: var(--shadow-card);
+  backdrop-filter: blur(18px);
+}
+
+@utility button-shine {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 45%;
+    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-primary-foreground) 22%, transparent), transparent);
+    transform: translateX(-110%);
+  }
+  &:hover::after { animation: wp-scan 0.8s ease; }
 }
 
 @utility gradient-text {
@@ -256,5 +288,6 @@
   .hero-glow {
     animation: none !important;
   }
+  .button-shine::after { animation: none !important; }
 }
 
