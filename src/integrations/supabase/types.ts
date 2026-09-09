@@ -86,6 +86,62 @@ export type Database = {
         }
         Relationships: []
       }
+      extension_rate_limits: {
+        Row: {
+          fingerprint: string
+          request_count: number
+          updated_at: string
+          window_started_at: string
+        }
+        Insert: {
+          fingerprint: string
+          request_count?: number
+          updated_at?: string
+          window_started_at?: string
+        }
+        Update: {
+          fingerprint?: string
+          request_count?: number
+          updated_at?: string
+          window_started_at?: string
+        }
+        Relationships: []
+      }
+      license_audit_logs: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json
+          id: number
+          license_id: number | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json
+          id?: number
+          license_id?: number | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json
+          id?: number
+          license_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_audit_logs_license_id_fkey"
+            columns: ["license_id"]
+            isOneToOne: false
+            referencedRelation: "licenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       license_devices: {
         Row: {
           device_id: string
@@ -94,6 +150,7 @@ export type Database = {
           label: string | null
           last_seen: string
           license_id: number
+          trial_license_id: number | null
           wa_number: string | null
         }
         Insert: {
@@ -103,6 +160,7 @@ export type Database = {
           label?: string | null
           last_seen?: string
           license_id: number
+          trial_license_id?: number | null
           wa_number?: string | null
         }
         Update: {
@@ -112,6 +170,7 @@ export type Database = {
           label?: string | null
           last_seen?: string
           license_id?: number
+          trial_license_id?: number | null
           wa_number?: string | null
         }
         Relationships: [
@@ -122,15 +181,24 @@ export type Database = {
             referencedRelation: "licenses"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "license_devices_trial_license_id_fkey"
+            columns: ["trial_license_id"]
+            isOneToOne: false
+            referencedRelation: "licenses"
+            referencedColumns: ["id"]
+          },
         ]
       }
       licenses: {
         Row: {
           activated_at: string | null
+          admin_note: string | null
           app_user_id: string | null
           business_name: string | null
           created_at: string
           current_devices: number
+          customer_phone: string | null
           duration_days: number | null
           expires_at: string | null
           id: number
@@ -149,10 +217,12 @@ export type Database = {
         }
         Insert: {
           activated_at?: string | null
+          admin_note?: string | null
           app_user_id?: string | null
           business_name?: string | null
           created_at?: string
           current_devices?: number
+          customer_phone?: string | null
           duration_days?: number | null
           expires_at?: string | null
           id?: never
@@ -171,10 +241,12 @@ export type Database = {
         }
         Update: {
           activated_at?: string | null
+          admin_note?: string | null
           app_user_id?: string | null
           business_name?: string | null
           created_at?: string
           current_devices?: number
+          customer_phone?: string | null
           duration_days?: number | null
           expires_at?: string | null
           id?: never
@@ -263,6 +335,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_license_device: {
+        Args: {
+          _device_id: string
+          _label: string
+          _license_id: number
+          _max_devices: number
+          _wa_number: string
+        }
+        Returns: {
+          created: boolean
+          device_count: number
+          device_row_id: string
+        }[]
+      }
+      consume_extension_rate_limit: {
+        Args: {
+          _fingerprint: string
+          _limit?: number
+          _window_seconds?: number
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
