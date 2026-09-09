@@ -4,7 +4,7 @@ const bars = [42, 68, 55, 82, 60, 95, 74, 88, 63, 79, 91, 70];
 
 export function DashboardPreview() {
   return (
-    <div className="relative">
+    <div className="relative overflow-hidden p-px">
       <div className="pointer-events-none absolute -inset-10 rounded-[2rem] bg-[image:var(--gradient-hero)] blur-2xl" />
       <div className="relative overflow-hidden rounded-lg border border-border/80 bg-surface/90 shadow-[var(--shadow-elevated)] backdrop-blur-xl">
         <div className="flex items-center gap-2 border-b border-border bg-background/60 px-4 py-2.5">
