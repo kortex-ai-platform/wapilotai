@@ -8,6 +8,7 @@ import {
   deleteLicense,
   listDevices,
   removeDevice,
+  listUsers,
 } from "@/lib/admin.functions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Copy, Laptop, Plus, RotateCcw, Trash2 } from "lucide-react";
+import { Copy, Laptop, Plus, RotateCcw, ShieldX } from "lucide-react";
 import { PLANS, planLabel } from "@/lib/license-utils";
 
 export const Route = createFileRoute("/admin/licenses")({
@@ -33,6 +34,7 @@ const DURATIONS = [
   { label: "30 Days", value: 30 },
   { label: "90 Days", value: 90 },
   { label: "365 Days", value: 365 },
+  { label: "Custom", value: 0 },
 ];
 
 const STATUS_TABS = ["all", "active", "inactive", "expired", "suspended", "revoked", "blocked"] as const;
@@ -46,6 +48,7 @@ function statusBadge(status: string) {
 function LicensesPage() {
   const qc = useQueryClient();
   const { data, isLoading } = useQuery({ queryKey: ["admin-licenses"], queryFn: () => listLicenses() });
+  const { data: users } = useQuery({ queryKey: ["admin-users-for-license"], queryFn: () => listUsers() });
   const createFn = useServerFn(createLicense);
   const updateFn = useServerFn(updateLicense);
   const deleteFn = useServerFn(deleteLicense);
@@ -58,6 +61,9 @@ function LicensesPage() {
   const [maxDevices, setMaxDevices] = useState(1);
   const [userName, setUserName] = useState("");
   const [businessName, setBusinessName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [adminNote, setAdminNote] = useState("");
+  const [appUserId, setAppUserId] = useState("none");
   const [search, setSearch] = useState("");
   const [tab, setTab] = useState<string>("all");
   const [newKey, setNewKey] = useState<string | null>(null);
@@ -135,6 +141,9 @@ function LicensesPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {duration === 0 && (
+                      <Input type="number" min={1} max={3650} placeholder="দিন লিখুন (যেমন 1)" onChange={(e) => setDuration(Math.max(1, Number(e.target.value) || 1))} />
+                    )}
                   </div>
                 )}
                 <div className="space-y-1">
@@ -153,8 +162,26 @@ function LicensesPage() {
                   </Select>
                 </div>
                 <div className="space-y-1">
+                  <Label>Login account (ঐচ্ছিক)</Label>
+                  <Select value={appUserId} onValueChange={setAppUserId}>
+                    <SelectTrigger><SelectValue placeholder="Account নির্বাচন করুন" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">কোনো account নয়</SelectItem>
+                      {(users ?? []).map((u: any) => <SelectItem key={u.id} value={u.id}>{u.name || u.email || u.phone || u.id}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
                   <Label>কাস্টমারের নাম (ঐচ্ছিক)</Label>
                   <Input value={userName} onChange={(e) => setUserName(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <Label>কাস্টমারের ফোন (ঐচ্ছিক)</Label>
+                  <Input value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} />
+                </div>
+                <div className="space-y-1">
+                  <Label>Admin note (ঐচ্ছিক)</Label>
+                  <Input value={adminNote} onChange={(e) => setAdminNote(e.target.value)} />
                 </div>
                 <div className="space-y-1">
                   <Label>ব্যবসার নাম (ঐচ্ছিক)</Label>
@@ -171,6 +198,9 @@ function LicensesPage() {
                           maxDevices,
                           userName: userName || undefined,
                           businessName: businessName || undefined,
+                          customerPhone: customerPhone || undefined,
+                          adminNote: adminNote || undefined,
+                          appUserId: appUserId === "none" ? null : appUserId,
                         },
                       });
                       setNewKey(res.key);
@@ -315,14 +345,15 @@ function LicensesPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={async () => {
-                          if (confirm("মুছে ফেলবেন?")) {
+                          title="Revoke license"
+                          onClick={async () => {
+                           if (confirm("License স্থায়ীভাবে revoke করবেন?")) {
                             await deleteFn({ data: { id: l.id } });
                             refresh();
                           }
                         }}
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <ShieldX className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
                   </TableCell>
@@ -357,7 +388,7 @@ function LicensesPage() {
                     refresh();
                   }}
                 >
-                  <Trash2 className="h-4 w-4 text-destructive" />
+                  <ShieldX className="h-4 w-4 text-destructive" />
                 </Button>
               </div>
             ))}

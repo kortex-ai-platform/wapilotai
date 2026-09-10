@@ -85,8 +85,8 @@ function DownloadPage() {
               ))}
             </ol>
             <p className="mt-6 rounded-lg bg-muted p-3 text-sm text-muted-foreground">
-              Install করার পর web.whatsapp.com খুলুন — Wapilot AI প্যানেল নিজে থেকেই চলে আসবে। ৩ দিনের ফ্রি
-              trial আপনার WhatsApp নম্বর দিয়ে শুরু হবে।
+              Install করার পর web.whatsapp.com খুলুন। Extension চালাতে প্রতিটি device-এ একটি valid Wapilot AI
+              license key activate করতে হবে; চাইলে একই screen থেকে একবারের ৩ দিনের trial শুরু করতে পারবেন।
             </p>
           </CardContent>
         </Card>

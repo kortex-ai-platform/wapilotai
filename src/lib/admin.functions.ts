@@ -8,6 +8,16 @@ async function assertAdmin(supabase: any, userId: string) {
   if (!data) throw new Error("Forbidden: admin only");
 }
 
+async function audit(supabase: any, adminUserId: string, licenseId: number | null, action: string, details: Record<string, unknown> = {}) {
+  const { error } = await supabase.from("license_audit_logs").insert({
+    admin_user_id: adminUserId,
+    license_id: licenseId,
+    action,
+    details,
+  });
+  if (error) throw new Error(error.message);
+}
+
 export const checkIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -78,6 +88,8 @@ export const createLicense = createServerFn({ method: "POST" })
         appUserId: z.string().uuid().nullable().optional(),
         userName: z.string().max(120).optional(),
         businessName: z.string().max(120).optional(),
+        customerPhone: z.string().max(30).optional(),
+        adminNote: z.string().max(1000).optional(),
       })
       .parse(input)
   )
@@ -87,7 +99,7 @@ export const createLicense = createServerFn({ method: "POST" })
     const duration = data.plan === "lifetime" ? null : data.durationDays;
     const key = generateLicenseKey(data.plan, duration);
     const key_hash = await hashKey(key);
-    const { error } = await supabase.from("licenses").insert({
+    const { data: created, error } = await supabase.from("licenses").insert({
       license_key: null,
       key_hash,
       key_prefix: key.slice(0, 9),
@@ -99,8 +111,16 @@ export const createLicense = createServerFn({ method: "POST" })
       app_user_id: data.appUserId ?? null,
       user_name: data.userName ?? null,
       business_name: data.businessName ?? null,
+      customer_phone: data.customerPhone ?? null,
+      admin_note: data.adminNote ?? null,
+    }).select("id").single();
+    if (error || !created) throw new Error(error?.message ?? "License creation failed");
+    await audit(supabase, userId, created.id, "created", {
+      plan: data.plan,
+      durationDays: duration,
+      maxDevices: data.maxDevices,
+      appUserId: data.appUserId ?? null,
     });
-    if (error) throw new Error(error.message);
     return { key };
   });
 
@@ -141,6 +161,7 @@ export const updateLicense = createServerFn({ method: "POST" })
     }
     const { error } = await supabase.from("licenses").update(patch).eq("id", data.id);
     if (error) throw new Error(error.message);
+    await audit(supabase, userId, data.id, data.resetDevices ? "devices_reset" : data.extendDays ? "extended" : "updated", patch);
     return { ok: true };
   });
 
@@ -150,7 +171,10 @@ export const deleteLicense = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context as any;
     await assertAdmin(supabase, userId);
-    await supabase.from("licenses").delete().eq("id", data.id);
+    const revokedAt = new Date().toISOString();
+    const { error } = await supabase.from("licenses").update({ status: "revoked", revoked_at: revokedAt }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    await audit(supabase, userId, data.id, "revoked", { revokedAt });
     return { ok: true };
   });
 
@@ -180,6 +204,7 @@ export const removeDevice = createServerFn({ method: "POST" })
       .select("id", { count: "exact", head: true })
       .eq("license_id", data.licenseId);
     await supabase.from("licenses").update({ current_devices: count ?? 0 }).eq("id", data.licenseId);
+    await audit(supabase, userId, data.licenseId, "device_removed", { deviceId: data.id });
     return { ok: true };
   });
 
