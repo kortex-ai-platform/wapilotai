@@ -27,6 +27,14 @@ function addDays(date: Date, days: number) {
 async function handle(path: string, request: Request): Promise<Response> {
   const supabase = await getAdmin();
   const url = new URL(request.url);
+  const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const fingerprint = `${forwardedFor || request.headers.get("cf-connecting-ip") || "unknown"}:${path}`;
+  const { data: allowed, error: rateError } = await (supabase.rpc as any)("consume_extension_rate_limit", {
+    _fingerprint: fingerprint,
+    _limit: path.startsWith("license/") || path.startsWith("trial/") ? 30 : 120,
+    _window_seconds: 60,
+  });
+  if (rateError || !allowed) return json({ success: false, valid: false, reason: "Too many requests. Please try again shortly." }, 429);
 
   switch (path) {
     case "trial/start": {
@@ -34,6 +42,7 @@ async function handle(path: string, request: Request): Promise<Response> {
       const body = z
         .object({
           waNumber: waSchema,
+          deviceId: z.string().min(6).max(120),
           userName: z.string().max(120).optional(),
           businessName: z.string().max(120).optional(),
         })
@@ -52,7 +61,7 @@ async function handle(path: string, request: Request): Promise<Response> {
         }
         return json({ success: false, reason: "Trial already used on this number." });
       }
-      const { error } = await supabase.from("licenses").insert({
+      const { data: created, error } = await supabase.from("licenses").insert({
         wa_number: body.waNumber,
         user_name: body.userName ?? null,
         business_name: body.businessName ?? null,
@@ -60,21 +69,40 @@ async function handle(path: string, request: Request): Promise<Response> {
         status: "active",
         trial_start: new Date().toISOString(),
         trial_days: 3,
+      }).select("id").single();
+      if (error || !created) return json({ success: false, reason: "Server error." }, 500);
+      const { data: claim, error: claimError } = await (supabase.rpc as any)("claim_license_device", {
+        _license_id: created.id,
+        _device_id: body.deviceId,
+        _label: "Trial device",
+        _wa_number: body.waNumber,
+        _max_devices: 1,
       });
-      if (error) return json({ success: false, reason: "Server error." }, 500);
+      if (claimError || !claim?.[0]) return json({ success: false, reason: "Unable to activate this device." }, 409);
+      await supabase.from("license_devices").update({ trial_license_id: created.id }).eq("id", claim[0].device_row_id);
+      await supabase.from("licenses").update({ current_devices: 1 }).eq("id", created.id);
       await supabase.from("analytics_events").insert({ wa_number: body.waNumber, event_type: "trial_start" });
       return json({ success: true, valid: true, daysLeft: 3, isTrial: true });
     }
 
     case "trial/check": {
       const waNumber = waSchema.safeParse(url.searchParams.get("waNumber") ?? "");
-      if (!waNumber.success) return json({ valid: false, isNew: true });
+      const deviceId = z.string().min(6).max(120).safeParse(url.searchParams.get("deviceId") ?? "");
+      if (!waNumber.success || !deviceId.success) return json({ valid: false, isNew: true });
       const { data } = await supabase
         .from("licenses")
         .select("*")
         .eq("wa_number", waNumber.data)
         .maybeSingle();
       if (!data) return json({ valid: false, isNew: true, isTrial: false });
+      const { data: trialDevice } = await supabase
+        .from("license_devices")
+        .select("id")
+        .eq("trial_license_id", data.id)
+        .eq("device_id", deviceId.data)
+        .maybeSingle();
+      if (data.plan === "trial" && !trialDevice)
+        return json({ valid: false, isNew: false, reason: "Trial is already linked to another device." });
       if (data.status === "disabled") return json({ valid: false, isNew: false, reason: "disabled" });
       if (data.plan === "trial") {
         const elapsed =
@@ -140,22 +168,19 @@ async function handle(path: string, request: Request): Promise<Response> {
       if (!device) {
         if (!isActivation)
           return json({ valid: false, status: "unbound", reason: "Device not activated for this license." });
-        const { count } = await supabase
-          .from("license_devices")
-          .select("id", { count: "exact", head: true })
-          .eq("license_id", lic.id);
-        if ((count ?? 0) >= (lic.max_devices ?? 1))
+        const { data: claim, error: claimError } = await (supabase.rpc as any)("claim_license_device", {
+          _license_id: lic.id,
+          _device_id: body.deviceId,
+          _label: body.label ?? null,
+          _wa_number: body.waNumber ?? null,
+          _max_devices: lic.max_devices ?? 1,
+        });
+        if (claimError || !claim?.[0])
           return json({
             valid: false,
             status: "device_limit",
-            reason: `Device limit reached (${count}/${lic.max_devices}). Deactivate another device first.`,
+            reason: `Device limit reached. Deactivate another device first.`,
           });
-        await supabase.from("license_devices").insert({
-          license_id: lic.id,
-          device_id: body.deviceId,
-          label: body.label ?? null,
-          wa_number: body.waNumber ?? null,
-        });
       } else {
         await supabase
           .from("license_devices")
@@ -217,7 +242,7 @@ async function handle(path: string, request: Request): Promise<Response> {
 
     case "device/list": {
       if (request.method !== "POST") return json({ success: false }, 405);
-      const body = z.object({ key: z.string().min(8).max(64) }).parse(await request.json());
+      const body = z.object({ key: z.string().min(8).max(64), deviceId: z.string().min(6).max(120) }).parse(await request.json());
       const hash = await hashKey(body.key);
       const { data: lic } = await supabase
         .from("licenses")
@@ -225,6 +250,13 @@ async function handle(path: string, request: Request): Promise<Response> {
         .eq("key_hash", hash)
         .maybeSingle();
       if (!lic) return json({ success: false, reason: "Invalid license key." });
+      const { data: requestingDevice } = await supabase
+        .from("license_devices")
+        .select("id")
+        .eq("license_id", lic.id)
+        .eq("device_id", body.deviceId)
+        .maybeSingle();
+      if (!requestingDevice) return json({ success: false, reason: "Device is not activated for this license." }, 403);
       const { data: devices } = await supabase
         .from("license_devices")
         .select("device_id,label,last_seen")
